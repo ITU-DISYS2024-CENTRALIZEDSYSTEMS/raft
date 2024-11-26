@@ -10,15 +10,15 @@
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{tcolorbox}
 \usepackage{enumerate}
 \usepackage{geometry}
- \geometry{
- a4paper,
- total={170mm,257mm},
- left=20mm,
- top=20mm,
- }
-
+\geometry{
+    a4paper,
+    total={170mm,257mm},
+    left=20mm,
+    top=20mm,
+    }
 \usepackage{graphicx}
 
 \usepackage{listings}
@@ -52,7 +52,19 @@ Source: \href{https://github.com/jmsadair/raft}{Github Repository - Raft @jmsada
 The \href{https://github.com/jmsadair/raft/blob/dev/transport.go}{transport.go} file handles the communication used by a node in the cluster, both to send and receive RPCs.
 
 \section*{Implementation quality}
-% This should be split into multiple subsubsections
+
+\subsubsection*{Election safety}
+
+\subsubsection*{Leader Append-Only}
+
+\subsubsection*{Log Matching}
+Log Matching is the concept of maintaning consistency across the logs in the cluster of nodes. The Implementation that @jmsadair gurrentee log matching with log replication.
+
+The \href{https://github.com/jmsadair/raft/blob/dev/raft.go#L797}{'AppendEntries()'} method handles log replication requests from the leader. It takes a \href{https://github.com/jmsadair/raft/blob/c7c645603a7a495d858771f1e91f8b5a76cd798d/internal/protobuf/raft.proto#L17}{request} that contains the data of the log entry to replicate, the index and term of the current and previous entry.
+If everything goes as planed - no network partitions happen (out-of-date terms)
+\subsubsection*{Leader completeness}
+
+\subsubsection*{State Machine Safety}
 
 \subsection*{Source}
 
