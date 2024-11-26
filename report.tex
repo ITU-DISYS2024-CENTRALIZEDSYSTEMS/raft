@@ -36,16 +36,24 @@
 
 \maketitle
 
-\subsection*{Introduction}
+\section*{Introduction}
+The following report describes the Implementation of the Raft consensus algorithm in Go made by Github User \href{https://github.com/jmsadair/}{@jmsadair}.
 
-\subsection*{Go features}
 
-\subsection*{Node communication}
+Source: \href{https://github.com/jmsadair/raft}{Github Repository - Raft @jmsadair}.
+\\
 
-\subsection*{Implementation quality}
+\section*{Go features}
+
+\section*{Node communication}
+@jmsadair uses gRPC as the method of communication between the nodes in the cluster. The \href{https://github.com/jmsadair/raft/blob/dev/internal/protobuf/raft.proto}{gPRCs} include the the ability of a node to 1. request missing log enteries from the leader 2. Request votes from other nodes in the cluster in a leader election. 
+
+
+The \href{https://github.com/jmsadair/raft/blob/dev/transport.go}{transport.go} file handles the communication used by a node in the cluster, both to send and receive RPCs.
+
+\section*{Implementation quality}
 % This should be split into multiple subsubsections
 
 \subsection*{Source}
-\href{https://github.com/jmsadair/raft}{https://github.com/jmsadair/raft}
 
 \end{document}
