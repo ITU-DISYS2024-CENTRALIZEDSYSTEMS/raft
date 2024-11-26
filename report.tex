@@ -58,6 +58,13 @@ The "mutex" structure is also used for atomic locks which ensures that each node
 And that a node for example is not both accepting another node to be elected and voting on it self at the same time.
 
 \subsubsection*{Leader Append-Only}
+Multiple checks are in place to ensure that only the leader could append to the log.
+That can, among other places, be seen in the "sendAppendEntries" function that send new entries to the other nodes.
+This function have a check in it that prevents to node from sending anything if it is not the leader.
+With this even a wrongly use of the method won't cause an issue in this case, even tho it should be rectified.
+
+The majority requirement of adding to the log is also implemented, 
+which Raft requires to ensure that the leader is not deciding on decisions without the other nodes following along.
 
 \subsubsection*{Log Matching}
 
