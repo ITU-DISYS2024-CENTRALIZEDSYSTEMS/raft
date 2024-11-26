@@ -39,6 +39,10 @@
 \subsection*{Introduction}
 
 \subsection*{Go features}
+The raft implementation is written using go routines and some channels.
+Some examples of the go routines being used could be the appending and commiting of information to the log, election handling and heartbeats.
+The reason for the use of channels is to move the decisions and actions take by the goroutines to the main routine.
+By combining these go features as much of the Raft implementation is multithreaded as possible.
 
 \subsection*{Node communication}
 
