@@ -38,31 +38,49 @@
 
 \section*{Introduction}
 The following report describes the Implementation of the Raft consensus algorithm in Go made by Github User \href{https://github.com/jmsadair/}{@jmsadair}.
+\\@jmsadair's implementation of the Raft consensus algorithm implements both leader elections with votes and node states, log replication via. gRPC and snapshots of the state if the logs.
 
-
-Source: \href{https://github.com/jmsadair/raft}{Github Repository - Raft @jmsadair}.
+This report will go through the @jmsadair's implementation and discuss the diffrent parts of the implementation, with focus on the quality of the implementation and Golang features.
 \\
 
-\section*{Go features}
+Source: \href{https://github.com/jmsadair/raft}{Github Repository - Raft @jmsadair}.
+\subsection*{Go features}
+The raft implementation is written using go routines and some channels.
+Some examples of the go routines being used could be the appending and commiting of information to the log, election handling and heartbeats.
+The reason for the use of channels is to move the decisions and actions take by the goroutines to the main routine.
+By combining these go features as much of the Raft implementation is multithreaded as possible.
 
+Go's defer keyword is also used but, besides the routine and channel usage, the rest of the go features is built in go quality of life features.
+Which is Go's spin on features from other languages, such as slices.
+\\
 \section*{Node communication}
 @jmsadair uses gRPC as the method of communication between the nodes in the cluster. The \href{https://github.com/jmsadair/raft/blob/dev/internal/protobuf/raft.proto}{gPRCs} include the the ability of a node to 1. request missing log enteries from the leader 2. Request votes from other nodes in the cluster in a leader election. 
 
-
-The \href{https://github.com/jmsadair/raft/blob/dev/transport.go}{transport.go} file handles the communication used by a node in the cluster, both to send and receive RPCs.
-
+The \href{https://github.com/jmsadair/raft/blob/dev/transport.go}{transport.go} file handles the communication used by a node in the cluster, both to send and receive RPCs. 
+The transporter converts the requests and responses to the right protobuf instances and sends them to the right node in the cluster - This happens both for sendVote and log entries. 
 \section*{Implementation quality}
 
 \subsubsection*{Election safety}
+A constant running "electionTicker" go routine is being sleept with a random amount of time.
+This is to ensure that no two nodes are asking for an election at the same time.
+The "mutex" structure is also used for atomic locks which ensures that each node's internal decisions can be trusted.
+And that a node for example is not both accepting another node to be elected and voting on it self at the same time.
 
 \subsubsection*{Leader Append-Only}
+Multiple checks are in place to ensure that only the leader could append to the log.
+That can, among other places, be seen in the "sendAppendEntries" function that send new entries to the other nodes.
+This function have a check in it that prevents to node from sending anything if it is not the leader.
+With this even a wrongly use of the method won't cause an issue in this case, even tho it should be rectified.
+
+The majority requirement of adding to the log is also implemented, 
+which Raft requires to ensure that the leader is not deciding on decisions without the other nodes following along.
 
 \subsubsection*{Log Matching}
 Log Matching is the concept of maintaning consistency across the logs in the cluster of nodes. The Implementation that @jmsadair gurrentee log matching with log replication.
 
 The \href{https://github.com/jmsadair/raft/blob/dev/raft.go#L797}{'AppendEntries()'} method handles log replication requests from the leader. It takes a \href{https://github.com/jmsadair/raft/blob/c7c645603a7a495d858771f1e91f8b5a76cd798d/internal/protobuf/raft.proto#L17}{request} that contains the data of the log entry to replicate, the index and term of the current and previous entry.
-If everything goes as planed - no network partitions happen (out-of-date terms)
-\subsubsection*{Leader completeness}
+If everything goes as planed, the log entry is appended to the log of the node.
+If something goes wrong, like network partitions, out-of-date terms or invalid log indexes, the method will reject the request - or it will become a follower if the request has a more up to date term.
 
 \subsubsection*{State Machine Safety}
 
