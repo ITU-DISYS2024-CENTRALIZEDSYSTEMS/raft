@@ -52,7 +52,7 @@ Which is Go's spin on features from other languages, such as slices.
 \subsection*{Implementation quality}
 
 \subsubsection*{Election safety}
-A constant running "electionTicker" go routine is being sleept with a random amount of time.
+A constant running "electionTicker" go routine is being send to sleep with a random amount of time.
 This is to ensure that no two nodes are asking for an election at the same time.
 The "mutex" structure is also used for atomic locks which ensures that each node's internal decisions can be trusted.
 And that a node for example is not both accepting another node to be elected and voting on it self at the same time.
