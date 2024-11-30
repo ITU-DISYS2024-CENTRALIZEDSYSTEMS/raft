@@ -48,6 +48,8 @@ Go's defer keyword is also used but, besides the routine and channel usage, the 
 Which is Go's spin on features from other languages, such as slices.
 
 \subsection*{Node communication}
+The communication between nodes is done through the use of proto-buff and GRPC, where the nodes can send and recieve votes. It is also used to send heartbeats. 
+The program also communicates internally between the goroutines, and is done through channels. This is to ensure flexibility and responsiveness of the the individual nodes. 
 
 \subsection*{Implementation quality}
 
@@ -69,6 +71,10 @@ which Raft requires to ensure that the leader is not deciding on decisions witho
 \subsubsection*{Log Matching}
 
 \subsubsection*{Leader completeness}
+To ensure a leader is either active or being actively selected, without ending in deadlock, the implementation uses a randomizer that delays the vote request for a random amount of time (default 300ms and 600ms).
+The randomizer is implemented to randomize who will send the request for votes first and therefore the chances of the same leader being chosen every program restart. The program also uses majority vote system,
+to mitigate the chance of a deadlock when there are two nodes getting votes. If there is two nodes that get equal amount of votes, the nodes resets the election and sends new requests for votes.
+Then due to the randomizer, the chances of a non-majority vote happens diminishes for every election reset that occurs.
 
 \subsubsection*{State Machine Safety}
 
