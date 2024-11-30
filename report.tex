@@ -52,6 +52,7 @@ The communication between nodes is done through the use of proto-buff and GRPC, 
 The program also communicates internally between the goroutines, and is done through channels. This is to ensure flexibility and responsiveness of the the individual nodes. 
 
 \subsection*{Implementation quality}
+The quality of the program is high, primarily due to the safety checks through the program. The implementation also uses tests to ensure the program works as intended.
 
 \subsubsection*{Election safety}
 A constant running "electionTicker" go routine is being send to sleep with a random amount of time.
