@@ -45,10 +45,10 @@ This report will go through the @jmsadair's implementation and discuss the diffr
 
 Source: \href{https://github.com/jmsadair/raft}{Github Repository - Raft @jmsadair}.
 \subsection*{Go features}
-The raft implementation is written using go routines and some channels.
+The raft implementation is written using go routines and a lock.
 Some examples of the go routines being used could be the appending and commiting of information to the log, election handling and heartbeats.
-The reason for the use of channels is to move the decisions and actions take by the goroutines to the main routine.
-By combining these go features as much of the Raft implementation is multithreaded as possible.
+The lock is used to ensure that the various go routines are not changing important values when other routines are accessing them.
+These go features allows for this Raft implementation is multithreaded as possible.
 
 Go's defer keyword is also used but, besides the routine and channel usage, the rest of the go features is built in go quality of life features.
 Which is Go's spin on features from other languages, such as slices.
