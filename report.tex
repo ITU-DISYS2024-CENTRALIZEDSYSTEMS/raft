@@ -90,9 +90,8 @@ If everything goes as planned, the log entry is appended to the log of the node.
 If something goes wrong, like network partitions, out-of-date terms or invalid log indexes, the method will reject the request - or it will become a follower if the request has a more up to date term.
 \subsubsection*{Leader completeness}
 To ensure a leader is either active or being actively selected, without ending in deadlock, the implementation uses a randomizer that delays the vote request for a random amount of time (default 300ms and 600ms).
-The randomizer is implemented to randomize who will send the request for votes first and therefore the chances of the same leader being chosen every program restart. The program also uses majority vote system,
-to mitigate the chance of a deadlock when there are two nodes getting votes. If there is two nodes that get equal amount of votes, the nodes resets the election and sends new requests for votes.
-Then due to the randomizer, the chances of a non-majority vote happens diminishes for every election reset that occurs.
+A randomizer is implemented such that the chance of two or more nodes, sending the request for votes is minimized. This improves the chances for a node to receive the majority of the votes, which is important because the program uses majority vote system.
+If there is two nodes that get equal amount of votes, the nodes resets the election and sends new requests for votes.
 
 \subsubsection*{State Machine Safety}
 The program esnures state machine safety through the checks in the function called \href{https://github.com/jmsadair/raft/blob/dev/raft.go#L858}{'AppendEntries()'} where it compares the previous index with the next index. 
