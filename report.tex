@@ -5,13 +5,14 @@
 \usepackage{enumitem}
 \usepackage{varwidth}
 \usepackage{tasks}
+\usepackage{amsmath}
 % Import packages
 \usepackage[a4paper]{geometry}
 \usepackage[utf8]{inputenc}
+\usepackage{varwidth}
+\usepackage{tasks}
 \usepackage{amsmath}
 \usepackage{amssymb}
-\usepackage{tcolorbox}
-\usepackage{enumerate}
 \usepackage{geometry}
 \geometry{
     a4paper,
@@ -54,8 +55,11 @@ Go's defer keyword is also used but, besides the routine and channel usage, the 
 Which is Go's spin on features from other languages, such as slices.
 \\
 \section*{Node communication}
-@jmsadair uses gRPC as the method of communication between the nodes in the cluster. The \href{https://github.com/jmsadair/raft/blob/dev/internal/protobuf/raft.proto}{gPRCs} include the the ability of a node to 1. request missing log enteries from the leader 2. Request votes from other nodes in the cluster in a leader election. 
-
+@jmsadair uses gRPC as the method of communication between the nodes in the cluster. The \href{https://github.com/jmsadair/raft/blob/dev/internal/protobuf/raft.proto}{gPRCs} include the ability of a node to 
+\begin{enumerate}[label=\arabic*.]
+    \item Request missing log enteries from the leader.
+    \item Request votes from other nodes in the cluster in a leader election. 
+\end{enumerate}
 The \href{https://github.com/jmsadair/raft/blob/dev/transport.go}{transport.go} file handles the communication used by a node in the cluster, both to send and receive RPCs. 
 The transporter converts the requests and responses to the right protobuf instances and sends them to the right node in the cluster - This happens both for sendVote and log entries. 
 
@@ -72,7 +76,7 @@ And that a node for example is not both accepting another node to be elected and
 \subsubsection*{Leader Append-Only}
 Multiple checks are in place to ensure that only the leader could append to the log.
 That can, among other places, be seen in the "sendAppendEntries" function that send new entries to the other nodes.
-This function have a check in it that prevents to node from sending anything if it is not the leader.
+This function have a check, that prevents the node from calling "sendAppendEntries" when it is not the leader.
 With this even a wrongly use of the method won't cause an issue in this case, even tho it should be rectified.
 
 The majority requirement of adding to the log is also implemented, 
