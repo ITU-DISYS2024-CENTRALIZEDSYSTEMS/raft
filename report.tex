@@ -91,7 +91,7 @@ to mitigate the chance of a deadlock when there are two nodes getting votes. If 
 Then due to the randomizer, the chances of a non-majority vote happens diminishes for every election reset that occurs.
 
 \subsubsection*{State Machine Safety}
-
-\subsection*{Source}
+The program esnures state machine safety through the checks in the function called \href{https://github.com/jmsadair/raft/blob/dev/raft.go#L858}{'AppendEntries()'} where it compares the previous index with the next index. 
+If the request index log is too short for it to contain the previous log, it rejects the request. This is to ensure only correct requests with a correct log is accepted a valid request.
 
 \end{document}
